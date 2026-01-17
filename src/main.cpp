@@ -1,18 +1,23 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+const byte LED_PIN = 5;        // Check your wiring! Previous header said 4, code says 5.
+const int PWM_FREQ = 5000;     // 5 kHz frequency
+const int PWM_RESOLUTION = 8;  // 8-bit resolution (0-255)
+const int PWM_CHANNEL = 0;     // PWM channel
+
+int duty_cycle = 0;    // Current brightness
+int fadeAmount = 5;    // How many points to fade the LED by
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+  ledcAttachPin(LED_PIN, PWM_CHANNEL);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  ledcWrite(PWM_CHANNEL, duty_cycle);
+  duty_cycle = duty_cycle + fadeAmount;
+  if (duty_cycle <= 0 || duty_cycle >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+  delay(30); 
 }
